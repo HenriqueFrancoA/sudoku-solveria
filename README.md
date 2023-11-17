@@ -30,7 +30,7 @@ themes: Configurações de tema e estilo.
 utils: Funções utilitárias como banco de dados local e helper.
 
 ## Uso
-![Níveis](/assets/readme01.gif)   ![Jogo](/assets/readme02.gif)
+![Níveis](/assets/images/readme01.gif)   ![Jogo](/assets/images/readme02.gif)
 
 
 ## Contribuição
