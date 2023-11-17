@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -5,6 +6,7 @@ import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 import 'package:sudoku_solveria/controllers/sudoku_controller.dart';
+import 'package:sudoku_solveria/models/banner_anuncio.dart';
 import 'package:sudoku_solveria/models/sudoku.dart';
 
 class GameScreen extends StatefulWidget {
@@ -19,7 +21,7 @@ class GameScreenState extends State<GameScreen> {
   final SudokuBoardController sudokuBoardController = SudokuBoardController();
   List<List<int>> initialMatrix = List.generate(9, (_) => List.filled(9, 0));
   List<List<int>> currentMatrix = List.generate(9, (_) => List.filled(9, 0));
-  BannerAd? myBannerTop;
+  // BannerAd? myBannerTop;
   BannerAd? myBanner;
   RewardedAd? rewardedAd;
   RxInt dicas = 0.obs;
@@ -32,8 +34,9 @@ class GameScreenState extends State<GameScreen> {
 
   void loadAd() async {
     await RewardedAd.load(
-        adUnitId:
-            'ca-app-pub-4824022930012497/2243544717', //online ca-app-pub-4824022930012497/2243544717
+        adUnitId: kReleaseMode
+            ? BannerAnuncio.idPremiado
+            : BannerAnuncio.testeIdPremiado,
         request: const AdRequest(),
         rewardedAdLoadCallback: RewardedAdLoadCallback(
           onAdLoaded: (ad) {
@@ -41,6 +44,9 @@ class GameScreenState extends State<GameScreen> {
             rewardedAd = ad;
           },
           onAdFailedToLoad: (LoadAdError error) {
+            setState(() {
+              ativouDica = true;
+            });
             debugPrint('RewardedAd failed to load: $error');
           },
         ));
@@ -50,48 +56,16 @@ class GameScreenState extends State<GameScreen> {
   void initState() {
     carregarDicas();
     loadAd();
-    myBannerTop = BannerAd(
-      size: AdSize.banner,
-      adUnitId:
-          'ca-app-pub-4824022930012497/1245323664', //online-> 'ca-app-pub-4824022930012497/1245323664',
-      listener: BannerAdListener(
-        onAdClosed: (ad) {
-          setState(() {
-            ad.dispose();
-            myBannerTop = null;
-          });
-        },
-        onAdOpened: (Ad ad) {
-          setState(() {
-            ad.dispose();
-            myBannerTop = null;
-          });
-        },
-        onAdFailedToLoad: (ad, err) {
-          ad.dispose();
-        },
-      ),
-      request: const AdRequest(),
-    )..load();
     myBanner = BannerAd(
       size: AdSize.banner,
-      adUnitId: "ca-app-pub-4824022930012497/1245323664",
-      // 'ca-app-pub-3940256099942544/6300978111', //online-> 'ca-app-pub-4824022930012497/1245323664',
+      adUnitId: kReleaseMode ? BannerAnuncio.id : BannerAnuncio.testeId,
       listener: BannerAdListener(
-        onAdClosed: (ad) {
-          setState(() {
-            ad.dispose();
-            myBanner = null;
-          });
-        },
-        onAdOpened: (Ad ad) {
-          setState(() {
-            ad.dispose();
-            myBanner = null;
-          });
-        },
         onAdFailedToLoad: (ad, err) {
-          ad.dispose();
+          setState(() {
+            ad.dispose();
+            myBanner = null;
+            print(err);
+          });
         },
       ),
       request: const AdRequest(),
@@ -154,33 +128,6 @@ class GameScreenState extends State<GameScreen> {
         appBar: AppBar(
           leading: null,
           backgroundColor: Colors.white,
-          title: myBannerTop != null
-              ? Stack(
-                  children: [
-                    Container(
-                      width: queryData.size.width,
-                      height: 50,
-                      color: Colors.black,
-                      child: AdWidget(
-                        ad: myBannerTop!,
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        setState(() {
-                          myBannerTop!.dispose();
-                          myBannerTop = null;
-                        });
-                      },
-                      icon: const Icon(
-                        Icons.close,
-                        color: Colors.red,
-                        size: 16,
-                      ),
-                    ),
-                  ],
-                )
-              : null,
         ),
         body: Center(
           child: Column(
@@ -427,7 +374,7 @@ class TabuleiroComponentState extends State<TabuleiroComponent> {
                                 }
                                 Get.offAllNamed("/transicao", arguments: {
                                   "sudoku": proxFase,
-                                  "destino": "/destino"
+                                  "destino": "/game"
                                 });
                               },
                               style: ElevatedButton.styleFrom(

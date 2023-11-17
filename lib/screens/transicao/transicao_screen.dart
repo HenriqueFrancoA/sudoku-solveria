@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:sudoku_solveria/models/banner_anuncio.dart';
 import 'package:sudoku_solveria/models/sudoku.dart';
 
 class TransicaoScreen extends StatefulWidget {
@@ -21,7 +23,7 @@ class TransicaoScreenState extends State<TransicaoScreen> {
   void initState() {
     super.initState();
     shouldShowAd = gerarChanceDeAnuncio();
-    if (shouldShowAd) {
+    if (shouldShowAd && interstitialAd != null) {
       loadAd();
     }
     iniciarTransicao();
@@ -34,7 +36,9 @@ class TransicaoScreenState extends State<TransicaoScreen> {
 
   void loadAd() async {
     InterstitialAd.load(
-      adUnitId: "ca-app-pub-4824022930012497/8133648726",
+      adUnitId: kReleaseMode
+          ? BannerAnuncio.idEsticado
+          : BannerAnuncio.testeIdEsticado,
       request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (ad) {
@@ -42,8 +46,7 @@ class TransicaoScreenState extends State<TransicaoScreen> {
           interstitialAd!.show();
         },
         onAdFailedToLoad: (error) {
-          debugPrint('InterstitialAd failed to load: $error');
-          iniciarTransicao();
+          interstitialAd = null;
         },
       ),
     );

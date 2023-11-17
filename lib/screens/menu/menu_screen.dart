@@ -1,9 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 import 'package:sudoku_solveria/controllers/sudoku_controller.dart';
+import 'package:sudoku_solveria/models/banner_anuncio.dart';
 import 'package:sudoku_solveria/models/sudoku.dart';
 
 class MenuScreen extends StatefulWidget {
@@ -40,25 +42,18 @@ class MenuScreenState extends State<MenuScreen> {
   @override
   void initState() {
     obterNiveis();
+    botaoSelecionado.value = 1;
+    sudokuController.obterFases("Easy");
     myBanner = BannerAd(
       size: AdSize.banner,
-      adUnitId: "ca-app-pub-4824022930012497/9367619593",
-      // 'ca-app-pub-3940256099942544/6300978111', //online-> 'ca-app-pub-4824022930012497/9367619593',
+      adUnitId: kReleaseMode ? BannerAnuncio.id : BannerAnuncio.testeId,
       listener: BannerAdListener(
-        onAdClosed: (ad) {
-          setState(() {
-            ad.dispose();
-            myBanner = null;
-          });
-        },
-        onAdOpened: (Ad ad) {
-          setState(() {
-            ad.dispose();
-            myBanner = null;
-          });
-        },
         onAdFailedToLoad: (ad, err) {
-          ad.dispose();
+          setState(() {
+            ad.dispose();
+            myBanner = null;
+            print(err);
+          });
         },
       ),
       request: const AdRequest(),
@@ -82,15 +77,6 @@ class MenuScreenState extends State<MenuScreen> {
             style: Theme.of(context).textTheme.titleMedium,
           ),
           backgroundColor: Colors.black,
-          actions: [
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.settings,
-                color: Colors.white,
-              ),
-            ),
-          ],
         ),
         body: Center(
           child: Column(
@@ -101,7 +87,7 @@ class MenuScreenState extends State<MenuScreen> {
                 style: Theme.of(context).textTheme.labelMedium,
               ),
               SizedBox(
-                height: 2.h,
+                height: 4.h,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
