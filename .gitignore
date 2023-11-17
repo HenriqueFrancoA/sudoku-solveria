@@ -45,4 +45,4 @@ app.*.map.json
 
 **/android/key.properties
 **/assets/keystore
-**/lib/models/bannerAnuncio.dart
+**/lib/models/banner_anuncio.dart
