@@ -16,13 +16,13 @@ class GameScreen extends StatefulWidget {
   State<GameScreen> createState() => GameScreenState();
 }
 
+BannerAd? myBanner;
+
 class GameScreenState extends State<GameScreen> {
   final sudoku = Get.arguments['sudoku'] as Sudoku;
   final SudokuBoardController sudokuBoardController = SudokuBoardController();
   List<List<int>> initialMatrix = List.generate(9, (_) => List.filled(9, 0));
   List<List<int>> currentMatrix = List.generate(9, (_) => List.filled(9, 0));
-  // BannerAd? myBannerTop;
-  BannerAd? myBanner;
   RewardedAd? rewardedAd;
   RxInt dicas = 0.obs;
   bool ativouDica = false;
@@ -131,7 +131,6 @@ class GameScreenState extends State<GameScreen> {
         ),
         body: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
                 'Quebra-Cabeça de Sudoku',

@@ -80,8 +80,10 @@ class MenuScreenState extends State<MenuScreen> {
         ),
         body: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              SizedBox(
+                height: 2.h,
+              ),
               Text(
                 "Escolha um nível: ",
                 style: Theme.of(context).textTheme.labelMedium,
