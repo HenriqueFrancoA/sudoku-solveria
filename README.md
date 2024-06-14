@@ -1,4 +1,4 @@
-# sudoku_solveria
+# Sudoku solveria
 
 Jogo clássico de SUDOKU, conta com mais de 200 níveis!!!
 
